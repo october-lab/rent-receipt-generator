@@ -1,7 +1,7 @@
 import React from 'react';
 import { RentDetails } from '../types';
 import { ArrowLeft, RefreshCw, ChevronDown } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, startOfYear, endOfYear, setMonth, setDate } from 'date-fns';
 import { TransactionIdInput } from './TransactionIdInput';
 
 interface Props {
@@ -12,15 +12,35 @@ interface Props {
 }
 
 export function RentDetailsForm({ details, onUpdate, onBack, onNext }: Props) {
+  // Get current financial year dates
+  const getCurrentFinancialYear = () => {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+    
+    // If current month is January to March (0-2), use previous year as start
+    const fiscalYearStart = currentMonth < 3 
+      ? new Date(currentYear - 1, 3, 1)  // April 1st of previous year
+      : new Date(currentYear, 3, 1);     // April 1st of current year
+    
+    const fiscalYearEnd = new Date(fiscalYearStart.getFullYear() + 1, 2, 31); // March 31st of next year
+
+    return {
+      start: fiscalYearStart,
+      end: fiscalYearEnd
+    };
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onNext();
   };
 
   const handleReset = () => {
+    const { start, end } = getCurrentFinancialYear();
     onUpdate({
-      rentFrom: null,
-      rentTill: null,
+      rentFrom: start,
+      rentTill: end,
       paymentMethod: 'UPI',
       transactionIds: {}
     });
@@ -34,6 +54,17 @@ export function RentDetailsForm({ details, onUpdate, onBack, onNext }: Props) {
       }
     });
   };
+
+  // Set default dates when component mounts if not already set
+  React.useEffect(() => {
+    if (!details.rentFrom || !details.rentTill) {
+      const { start, end } = getCurrentFinancialYear();
+      onUpdate({
+        rentFrom: start,
+        rentTill: end
+      });
+    }
+  }, []);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
