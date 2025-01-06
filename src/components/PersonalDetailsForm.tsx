@@ -71,14 +71,15 @@ export function PersonalDetailsForm({ details, onUpdate, onNext }: Props) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Landlord's PAN (optional)
+            Owner's PAN (Optional)
           </label>
           <input
             type="text"
-            value={details.landlordPan || ''}
-            onChange={(e) => onUpdate({ landlordPan: e.target.value })}
+            value={details.landlordPan}
+            onChange={(e) => onUpdate({ landlordPan: e.target.value.toUpperCase() })}
+            placeholder="ABCDE1234F"
+            maxLength={10}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
-            placeholder="Enter PAN number"
           />
         </div>
 

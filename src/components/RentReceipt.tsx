@@ -184,7 +184,7 @@ export function RentReceipt({ details }: Props) {
                   {details.landlordPan && (
                     <View style={styles.detailRow}>
                       <Text style={styles.label}>Owner's PAN:</Text>
-                      <Text style={styles.value}>{details.landlordPan}</Text>
+                      <Text style={styles.value}>{details.landlordPan?.toUpperCase()}</Text>
                     </View>
                   )}
 
@@ -251,7 +251,7 @@ export function RentReceipt({ details }: Props) {
                     {details.landlordPan && (
                       <View style={styles.detailRow}>
                         <Text style={styles.label}>Owner's PAN:</Text>
-                        <Text style={styles.value}>{details.landlordPan}</Text>
+                        <Text style={styles.value}>{details.landlordPan?.toUpperCase()}</Text>
                       </View>
                     )}
 
