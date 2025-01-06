@@ -3,6 +3,7 @@ import { Page, Text, View, Document, StyleSheet, PDFViewer, pdf } from '@react-p
 import { RentDetails } from '../types';
 import { format, eachMonthOfInterval, endOfMonth, startOfMonth } from 'date-fns';
 import { Download, ArrowLeft } from 'lucide-react';
+import { trackEvent, analyticsEvents } from '../utils/analytics';
 
 // Use standard fonts that come with react-pdf
 const styles = StyleSheet.create({
@@ -191,9 +192,8 @@ export function RentReceipt({ details, onBack }: Props) {
                   <Text style={styles.title}>Receipt of House Rent</Text>
                   <Text style={styles.subtitle}>Under Section 10(13A) of Income Tax Act</Text>
                 </View>
-
                 <Text style={styles.periodText}>
-                  From {format(details.rentFrom, 'dd/MM/yyyy')} to {format(details.rentTill, 'dd/MM/yyyy')}
+                  From {format(details.rentFrom!, 'dd/MM/yyyy')} to {format(details.rentTill!, 'dd/MM/yyyy')}
                 </Text>
 
                 <View style={styles.horizontalLine} />
@@ -307,6 +307,12 @@ export function RentReceipt({ details, onBack }: Props) {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+
+      // Track download event
+      trackEvent(analyticsEvents.DOWNLOAD_RECEIPT, {
+        receipt_type: details.receiptType,
+        months_count: months.length
+      });
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('There was an error generating the PDF. Please try again.');

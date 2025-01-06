@@ -4,6 +4,7 @@ import { PersonalDetailsForm } from './components/PersonalDetailsForm';
 import { RentDetailsForm } from './components/RentDetailsForm';
 import { RentReceipt } from './components/RentReceipt';
 import { IndianRupeeIcon, Github } from 'lucide-react';
+import { GoogleAnalytics } from './components/GoogleAnalytics';
 
 const initialDetails: RentDetails = {
   tenantName: '',
@@ -70,6 +71,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <GoogleAnalytics measurementId={import.meta.env.VITE_GA_MEASUREMENT_ID} />
+      
       <div className="flex-grow">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
