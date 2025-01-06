@@ -151,13 +151,14 @@ const styles = StyleSheet.create({
 
 interface Props {
   details: RentDetails;
+  onBack?: () => void;
 }
 
 const formatCurrency = (amount: number) => {
   return `Rs ${amount.toLocaleString('en-IN')}`;
 };
 
-export function RentReceipt({ details }: Props) {
+export function RentReceipt({ details, onBack }: Props) {
   const [isMobile, setIsMobile] = useState(false);
   
   if (!details.rentFrom || !details.rentTill) return null;
@@ -319,11 +320,11 @@ export function RentReceipt({ details }: Props) {
           {/* Header */}
           <div className="px-4 py-3 border-b border-gray-200">
             <button
-              onClick={() => window.history.back()}
+              onClick={onBack}
               className="flex items-center text-gray-700"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
-              Back
+              Back to Edit
             </button>
           </div>
 

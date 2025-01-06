@@ -58,7 +58,10 @@ function App() {
               </button>
             </div>
             <div className="h-[800px]">
-              <RentReceipt details={details} />
+              <RentReceipt 
+                details={details} 
+                onBack={() => setCurrentStep('RENT_DETAILS')}
+              />
             </div>
           </div>
         );
