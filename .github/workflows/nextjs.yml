@@ -36,7 +36,9 @@ jobs:
         run: npm ci
         
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          cp public/ads.txt dist/
         env:
           VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
         
