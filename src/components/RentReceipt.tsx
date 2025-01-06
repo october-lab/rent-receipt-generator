@@ -1,7 +1,8 @@
-import React from 'react';
-import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
+import React, { useEffect, useState } from 'react';
+import { Page, Text, View, Document, StyleSheet, PDFViewer, pdf } from '@react-pdf/renderer';
 import { RentDetails } from '../types';
 import { format, eachMonthOfInterval, endOfMonth, startOfMonth } from 'date-fns';
+import { Download, ArrowLeft } from 'lucide-react';
 
 // Use standard fonts that come with react-pdf
 const styles = StyleSheet.create({
@@ -131,6 +132,20 @@ const styles = StyleSheet.create({
   detailsSection: {
     marginTop: 20,
     width: '60%'
+  },
+  mobileContainer: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '1rem',
+    backgroundColor: 'white',
+    zIndex: 50
   }
 });
 
@@ -138,7 +153,13 @@ interface Props {
   details: RentDetails;
 }
 
+const formatCurrency = (amount: number) => {
+  return `Rs ${amount.toLocaleString('en-IN')}`;
+};
+
 export function RentReceipt({ details }: Props) {
+  const [isMobile, setIsMobile] = useState(false);
+  
   if (!details.rentFrom || !details.rentTill) return null;
 
   const months = eachMonthOfInterval({
@@ -146,18 +167,23 @@ export function RentReceipt({ details }: Props) {
     end: details.rentTill
   });
 
-  const formatCurrency = (amount: number) => {
-    return `Rs ${amount.toLocaleString('en-IN')}`;
-  };
-
   const totalRent = details.monthlyRent * months.length;
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-  // If consolidated, return single receipt for entire period
-  if (details.receiptType === 'CONSOLIDATED') {
-    return (
-      <div className="w-full h-full">
-        <PDFViewer className="w-full h-full">
-          <Document>
+  const handleDownload = async () => {
+    try {
+      const documentContent = (
+        <Document>
+          {details.receiptType === 'CONSOLIDATED' ? (
             <Page size="A4" style={styles.page}>
               <View style={styles.border}>
                 <View style={styles.titleRow}>
@@ -207,13 +233,126 @@ export function RentReceipt({ details }: Props) {
                 </View>
               </View>
             </Page>
-          </Document>
-        </PDFViewer>
+          ) : (
+            months.map((month) => {
+              const monthKey = format(month, 'yyyy-MM');
+              const periodStart = startOfMonth(month);
+              const periodEnd = endOfMonth(month);
+              const receiptDate = new Date(periodEnd.getTime() + 24 * 60 * 60 * 1000);
+
+              return (
+                <Page key={monthKey} size="A4" style={styles.page}>
+                  <View style={styles.border}>
+                    <View style={styles.titleRow}>
+                      <Text style={styles.title}>Receipt of House Rent</Text>
+                      <Text style={styles.subtitle}>Under Section 10(13A) of Income Tax Act</Text>
+                    </View>
+
+                    <Text style={styles.periodText}>
+                      From {format(periodStart, 'dd/MM/yyyy')} to {format(periodEnd, 'dd/MM/yyyy')}
+                    </Text>
+
+                    <View style={styles.horizontalLine} />
+
+                    <Text style={styles.mainContent}>
+                      Received a sum of <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#1e293b', letterSpacing: 0.5 }}>{formatCurrency(details.monthlyRent)}</Text> from the occupant, <Text style={styles.boldText}>{details.tenantName}</Text> via {details.paymentMethod.replace('_', ' ')} towards the rent of property located at <Text style={styles.boldText}>{details.address}</Text> for the period from {format(periodStart, 'dd/MM/yyyy')} to {format(periodEnd, 'dd/MM/yyyy')}
+                    </Text>
+
+                    <View style={styles.detailsSection}>
+                      <View style={styles.detailRow}>
+                        <Text style={styles.label}>Property Address:</Text>
+                        <Text style={styles.value}>{details.address}</Text>
+                      </View>
+
+                      {details.landlordPan && (
+                        <View style={styles.detailRow}>
+                          <Text style={styles.label}>Owner's PAN:</Text>
+                          <Text style={styles.value}>{details.landlordPan?.toUpperCase()}</Text>
+                        </View>
+                      )}
+
+                      {details.paymentMethod !== 'CASH' && 
+                       details.includeTransactionIds && 
+                       details.transactionIds[monthKey] && (
+                        <View style={styles.detailRow}>
+                          <Text style={styles.label}>Transaction ID:</Text>
+                          <Text style={styles.value}>{details.transactionIds[monthKey]}</Text>
+                        </View>
+                      )}
+                    </View>
+
+                    <View style={styles.landlordSection}>
+                      <Text style={styles.landlordText}>Landlord</Text>
+                      <Text style={styles.landlordName}>{details.landlordName}</Text>
+                      <Text style={styles.date}>Date: {format(receiptDate, 'dd/MM/yyyy')}</Text>
+                    </View>
+                  </View>
+                </Page>
+              );
+            })
+          )}
+        </Document>
+      );
+
+      const blob = await pdf(documentContent).toBlob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const fileName = details.receiptType === 'CONSOLIDATED' 
+        ? `rent-receipt-${details.tenantName.toLowerCase().replace(/\s+/g, '-')}-consolidated.pdf`
+        : `rent-receipt-${details.tenantName.toLowerCase().replace(/\s+/g, '-')}-${format(details.rentFrom, 'MMM-yyyy')}-to-${format(details.rentTill, 'MMM-yyyy')}.pdf`;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('There was an error generating the PDF. Please try again.');
+    }
+  };
+
+  if (isMobile) {
+    return (
+      <div className="fixed inset-0 bg-white z-50">
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <div className="px-4 py-3 border-b border-gray-200">
+            <button
+              onClick={() => window.history.back()}
+              className="flex items-center text-gray-700"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Back
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 flex flex-col items-center justify-center p-4">
+            <div className="w-full max-w-sm space-y-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Download Rent Receipt
+                </h3>
+                <p className="text-sm text-gray-500">
+                  PDF preview is not available on mobile devices. Click below to download your receipt.
+                </p>
+              </div>
+
+              <button
+                onClick={handleDownload}
+                className="w-full flex items-center justify-center px-4 py-3 text-sm font-medium text-white bg-coral-500 rounded-md hover:bg-coral-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral-500"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download PDF
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
-  // For monthly receipts, return existing implementation
   return (
     <div className="w-full h-full">
       <PDFViewer className="w-full h-full">

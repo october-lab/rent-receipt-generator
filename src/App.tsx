@@ -3,7 +3,7 @@ import { RentDetails, Step } from './types';
 import { PersonalDetailsForm } from './components/PersonalDetailsForm';
 import { RentDetailsForm } from './components/RentDetailsForm';
 import { RentReceipt } from './components/RentReceipt';
-import {  IndianRupeeIcon } from 'lucide-react';
+import { IndianRupeeIcon, Github } from 'lucide-react';
 
 const initialDetails: RentDetails = {
   tenantName: '',
@@ -66,22 +66,37 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <IndianRupeeIcon className="h-12 w-12 text-coral-500" />
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="flex-grow">
+        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <IndianRupeeIcon className="h-12 w-12 text-coral-500" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900">Rent Receipt Generator</h1>
+            <p className="mt-2 text-sm text-gray-600">
+              Generate professional rent receipts for your tax documentation
+            </p>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Rent Receipt Generator</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Generate professional rent receipts for your tax documentation
-          </p>
-        </div>
 
-        <div className="bg-white shadow rounded-lg p-6 md:p-8">
-          {renderStep()}
+          <div className="bg-white shadow rounded-lg p-6 md:p-8">
+            {renderStep()}
+          </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 py-6 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
+            <p className="text-sm text-gray-500">
+              © {new Date().getFullYear()} Rent Receipt Generator. All rights reserved.
+            </p>
+            <div className="flex items-center space-x-4">
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
