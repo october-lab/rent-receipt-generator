@@ -9,4 +9,13 @@ export default defineConfig({
   },
   base: './',
   publicDir: 'public',
+  build: {
+    outDir: 'dist',
+    // Add this to ensure all routes work
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
 });

@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Privacy } from './pages/Privacy';
 import { Terms } from './pages/Terms';
 import { About } from './pages/About';
@@ -14,7 +14,7 @@ import { HraDocumentation } from './pages/blog/HraDocumentation';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename="/">
+    <BrowserRouter basename={process.env.NODE_ENV === 'production' ? '/' : '/'}>
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/privacy" element={<Privacy />} />
@@ -25,6 +25,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/blog/rent-receipts-importance" element={<RentReceiptsImportance />} />
         <Route path="/blog/pan-requirement-rent" element={<PanRequirementRent />} />
         <Route path="/blog/hra-documentation" element={<HraDocumentation />} />
+        <Route path="*" element={<Navigate to="/" />} />
         {/* Add other blog post routes */}
       </Routes>
     </BrowserRouter>
