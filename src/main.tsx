@@ -14,18 +14,15 @@ import { HraDocumentation } from './pages/blog/HraDocumentation';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename="/">
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/about" element={<About />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/*" element={<Blog />} />
         <Route path="/blog/hra-guide-2024" element={<HraGuide2024 />} />
         <Route path="/blog/rent-receipts-importance" element={<RentReceiptsImportance />} />
         <Route path="/blog/pan-requirement-rent" element={<PanRequirementRent />} />
         <Route path="/blog/hra-documentation" element={<HraDocumentation />} />
-        {/* Add other blog post routes */}
       </Routes>
     </BrowserRouter>
   </StrictMode>
