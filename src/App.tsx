@@ -7,6 +7,7 @@ import { IndianRupeeIcon, Github } from 'lucide-react';
 import { GoogleAnalytics } from './components/GoogleAnalytics';
 import { Link } from 'react-router-dom';
 import { CookieBanner } from './components/CookieBanner';
+import { Header } from './components/Header';
 
 const initialDetails: RentDetails = {
   tenantName: '',
@@ -75,6 +76,8 @@ function App() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <GoogleAnalytics measurementId={import.meta.env.VITE_GA_MEASUREMENT_ID} />
       
+      <Header />
+      
       <div className="flex-grow">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="mb-8 text-center">
@@ -131,6 +134,9 @@ function App() {
                 © {new Date().getFullYear()} Rent Receipt Generator. All rights reserved.
               </div>
               <div className="flex space-x-6">
+                <Link to="/blog" className="text-sm text-gray-500 hover:text-gray-900">
+                  Blog
+                </Link>
                 <Link to="/privacy" className="text-sm text-gray-500 hover:text-gray-900">
                   Privacy Policy
                 </Link>

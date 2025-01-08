@@ -18,7 +18,24 @@ export default {
           950: '#480707',
         },
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+            color: '#333',
+            a: {
+              color: '#e11d48',
+              '&:hover': {
+                color: '#be123c',
+              },
+            },
+          },
+        },
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/line-clamp'),
+  ],
 };
