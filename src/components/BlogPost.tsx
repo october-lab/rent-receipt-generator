@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Header } from './Header';
+import { trackEvent } from '../utils/analytics';
 
 interface BlogPostProps {
     title: string;
@@ -9,10 +10,23 @@ interface BlogPostProps {
 }
 
 export function BlogPost({ title, date, content }: BlogPostProps) {
+    const navigate = useNavigate();
+
+    const handleGeneratorClick = () => {
+        trackEvent('blog_post_click', {
+            post_id: 'cta_button',
+            post_title: 'Try Free Generator'
+        });
+
+        // Navigate to home and scroll to top
+        navigate('/');
+        window.scrollTo(0, 0);
+    };
+
     return (
         <div className="min-h-screen bg-white flex flex-col">
             <Header />
-            
+
             <div className="flex-grow">
                 {/* Article Header */}
                 <header className="border-b border-gray-200">
@@ -62,12 +76,12 @@ export function BlogPost({ title, date, content }: BlogPostProps) {
                             <p className="text-gray-600 mb-6">
                                 Create professional rent receipts instantly with our free tool. Perfect for HRA claims and tax documentation.
                             </p>
-                            <Link
-                                to="/"
+                            <button
+                                onClick={handleGeneratorClick}
                                 className="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-coral-600 rounded-lg hover:bg-coral-700 transition-colors"
                             >
                                 Try Free Generator
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </main>

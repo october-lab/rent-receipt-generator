@@ -17,25 +17,23 @@ export function Header() {
                             <span className="text-gray-900 font-medium">Rent Receipt Generator</span>
                         </Link>
                     </div>
-                    
+
                     <nav className="flex space-x-8">
-                        <Link 
-                            to="/" 
-                            className={`text-sm font-medium ${
-                                isActive('/') 
-                                    ? 'text-coral-600' 
+                        <Link
+                            to="/"
+                            className={`text-sm font-medium ${isActive('/')
+                                    ? 'text-coral-600'
                                     : 'text-gray-500 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             Home
                         </Link>
-                        <Link 
-                            to="/blog" 
-                            className={`text-sm font-medium ${
-                                isActive('/blog') 
-                                    ? 'text-coral-600' 
+                        <Link
+                            to="/blog"
+                            className={`text-sm font-medium ${isActive('/blog')
+                                    ? 'text-coral-600'
                                     : 'text-gray-500 hover:text-gray-900'
-                            }`}
+                                }`}
                         >
                             Blog
                         </Link>

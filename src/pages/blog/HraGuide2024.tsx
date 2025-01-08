@@ -1,7 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BlogPost } from '../../components/BlogPost';
+import { trackEvent } from '../../utils/analytics';
+import { useNavigate } from 'react-router-dom';
 
 export function HraGuide2024() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        trackEvent('blog_post_view', {
+            post_id: 'hra-guide-2024',
+            post_title: 'Complete Guide to HRA Exemption in India (2024)'
+        });
+    }, []);
+
+    const handleGeneratorClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        trackEvent('generator_cta_click', {
+            post_id: 'hra-guide-2024',
+            post_title: 'Complete Guide to HRA Exemption in India (2024)',
+            source: 'inline_link'
+        });
+        navigate('/');
+        window.scrollTo(0, 0);
+    };
+
     return (
         <BlogPost
             title="Complete Guide to HRA Exemption in India (2024)"
@@ -35,7 +57,11 @@ export function HraGuide2024() {
 
                     <p>
                         Generate professional rent receipts instantly using our{' '}
-                        <a href="https://rentreceiptgenerator.in" className="text-coral-600 hover:text-coral-700">
+                        <a
+                            href="/"
+                            onClick={handleGeneratorClick}
+                            className="text-coral-600 hover:text-coral-700"
+                        >
                             free rent receipt generator
                         </a>
                     </p>

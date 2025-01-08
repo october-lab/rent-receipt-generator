@@ -1,8 +1,21 @@
-type GtagEventParams = Record<string, string | number | boolean>;
+type EventNames = 
+  | 'blog_view'
+  | 'blog_post_view'
+  | 'blog_post_click'
+  | 'generator_cta_click';
 
-export const trackEvent = (eventName: string, params?: GtagEventParams) => {
-  if (window.gtag) {
-    window.gtag('event', eventName, params);
+interface BlogPostEvent {
+  post_id: string;
+  post_title: string;
+  source?: string;
+}
+
+export const trackEvent = (
+  eventName: EventNames,
+  eventParams?: BlogPostEvent
+) => {
+  if (typeof window.gtag !== 'undefined') {
+    window.gtag('event', eventName, eventParams);
   }
 };
 

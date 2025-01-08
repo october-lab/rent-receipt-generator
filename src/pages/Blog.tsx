@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from '../components/Header';
+import { trackEvent } from '../utils/analytics';
 
 const blogPosts = [
     {
@@ -34,10 +35,22 @@ const blogPosts = [
 ];
 
 export function Blog() {
+    useEffect(() => {
+        // Track blog list page view
+        trackEvent('blog_view');
+    }, []);
+
+    const handlePostClick = (post: typeof blogPosts[0]) => {
+        trackEvent('blog_post_click', {
+            post_id: post.id,
+            post_title: post.title
+        });
+    };
+
     return (
         <div className="min-h-screen bg-white flex flex-col">
             <Header />
-            
+
             <div className="flex-grow">
                 <div className="max-w-screen-md mx-auto py-12 px-4">
                     <h1 className="text-4xl font-serif font-bold text-gray-900 mb-12 text-center">
@@ -50,6 +63,7 @@ export function Blog() {
                                 key={post.id}
                                 to={`/blog/${post.id}`}
                                 className="block group"
+                                onClick={() => handlePostClick(post)}
                             >
                                 <article className="bg-white rounded-xl p-6 hover:shadow-lg transition-shadow duration-300">
                                     <h2 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-coral-600 transition-colors">
